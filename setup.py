@@ -1,3 +1,4 @@
+"""Setup for main.py, which runs when the movie ratings program is started. """
 
 def read_movie(filename):
 	movie_dic = {}
@@ -11,11 +12,13 @@ def read_movie(filename):
 	return movie_dic
 
 def fix_genres(movie_dic, filename):
+	# Replaces list of binaries with string of genre names in movie_dic
 	genre_dic = read_genre(filename)
 	movie_dic = update_genre(movie_dic, genre_dic)
 	return movie_dic
 
 def read_genre(filename):
+	# Helper function for fix genres which generates genre dictionary with genre_id = genre_name
 	genres = open (filename, "r")
 	genre_dic = {}
 	for line in genres:
@@ -28,6 +31,7 @@ def read_genre(filename):
 	return genre_dic
 
 def update_genre(movie_dic, genre_dic):
+	# Helper function for fix genres which replaces a list of binary values in movie_dic with a string of genre names by looking them up by genre id
 	for movie in movie_dic:
 		gen_list = movie_dic[movie]["genre"]
 		glist = []
@@ -36,11 +40,12 @@ def update_genre(movie_dic, genre_dic):
 			if gen_list[i] == '1':
 				glist.append(genre_dic['%d'%(i)])
 			i += 1
-		cool_genre = ", ".join(glist)
-		movie_dic[movie]["genre"] = cool_genre
+		genre_string = ", ".join(glist)
+		movie_dic[movie]["genre"] = genre_string
 	return movie_dic
 
 def create_movie():
+	# main function generating final movie_dic with fixed genres
 	movie_dic = read_movie("ml-100k/u.item")
 	fix_genres(movie_dic, "ml-100k/u.genre")
 	return movie_dic

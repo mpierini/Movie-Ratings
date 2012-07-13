@@ -2,6 +2,10 @@ from setup import create_movie, create_user, create_rating
 from correlation import pearson_similarity
 from sys import exit
 
+"""All dictionaries are being imported from setup.py which is located 
+in this directory. Except for YOU_DIC which is created in the main function 
+each time the program is run. """
+
 MOVIE_DIC = None
 USER_DIC = None
 DATA_DIC = None
@@ -46,8 +50,6 @@ def average_movie_rating(movie_id):
 def rate(movie_id, rating):
 	"""Returns a new rating from a user with given movie id and star rating. 
 	Dictionary for user input is created in this function. """
-	global YOU_DIC
-	YOU_DIC = {}
 	YOU_DIC[movie_id] = rating
 	movie_title = MOVIE_DIC[movie_id]['title']
 	return "You have rated movie %s: %s at %s stars" %(movie_id, movie_title, rating)
@@ -59,16 +61,17 @@ def predict(movie_id):
 	movie_ratings = make_movie_ratings()
 	movie_title = MOVIE_DIC[movie_id]['title']
 	a = 0
+	d = []
 	for each in YOU_DIC:
 		similarity = pearson_similarity(movie_ratings, movie_title, MOVIE_DIC[each]['title'])
-		if similarity > .5:
-			a = YOU_DIC[each] #rating of a movie that's pretty similar to this one
-			break
-	if a == 0:
-		return "Watch at your own risk!"
-	else:
-		rating = a
-		return "Best guess for movie %s: %s is %s stars" %(movie_id, movie_title, rating)
+		d.append([similarity, each]) # each is {movie_id : rating}
+	d.sort(reverse=True)
+	best = d[0]
+	if d[0][0] < 0.25:
+		return "Please rate more movies so we know what you like, then try again"
+	best_id = best[1]
+	best_rating = YOU_DIC[best_id]
+	return "Best guess for movie %s: %s is %s stars" %(movie_id, movie_title, best_rating)
 
 def make_movie_ratings():
 	"""Helper function for predict. Generates dictionary of titles, users, and ratings. """
@@ -86,6 +89,8 @@ def main():
 	USER_DIC = create_user()
 	global DATA_DIC
 	DATA_DIC = create_rating()
+	global YOU_DIC
+	YOU_DIC = {}
 	mixology = True
 	while mixology == True:
 		print """

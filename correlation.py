@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from math import sqrt
 
+"""Helper to main.py which runs in the predict function and generates a similarity score 
+between the movie asked to predict rating for and all the other movies a user has rated."""
+
 def pearson_similarity(movie_ratings, film1, film2):
     """Produces a metric of similarity between movies, 1.0 means the movies are
     essentially identical, -1.0 means they are complete opposites on the
